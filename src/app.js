@@ -8,6 +8,7 @@ import DropzoneComponent from 'react-dropzone-component';
 import '../node_modules/react-dropzone-component/styles/filepicker.css';
 import '../node_modules/dropzone/dist/min/dropzone.min.css';
 import Gallery from './gallery/Gallery.js'
+import SelectGallery from './selectGallery/SelectGallery.js'
 
 class App extends React.Component {
 
@@ -15,7 +16,8 @@ class App extends React.Component {
     super(props);
     this.state = {
                   titulo: "Dat Gallery2",
-                  cambios:0
+                  cambios:0,
+                  seleccion: false
     };
     this.actualiza = this.actualiza.bind(this);
   }
@@ -28,15 +30,18 @@ class App extends React.Component {
   render(){
 
     let componentConfig = { iconFiletypes: ['.jpg', '.png', '.gif'], showFiletypeIcon: true, postUrl: '/upload' };
+    console.log(this.state.seleccion);
     return (<div>
+
                 <div className="page-header" style={{textAlign: "center"}}>
                   <h1>{this.state.titulo}</h1>
                 </div>
-                <DropzoneComponent  className="center-block" config={componentConfig}
+                {!this.state.seleccion && <SelectGallery/>}
+                {this.state.seleccion && <DropzoneComponent  className="center-block" config={componentConfig}
                                   eventHandlers={{ addedfile: (file) => this.actualiza()}}
-                                  djsConfig={{autoProcessQueue: true, createImageThumbnails: true}} />
+                                  djsConfig={{autoProcessQueue: true, createImageThumbnails: true}} />}
                 <hr />
-                <Gallery actualiza={this.state.cambios}/>
+                {this.state.seleccion && <Gallery actualiza={this.state.cambios}/>}
           </div>);
   }
 }

@@ -49,6 +49,10 @@ app.get('/imagenes', function(req, res) {
   res.send(fs.readdirSync('./5000/images/'));
 });
 
+app.get('/opciones', function(req, res) {
+  res.send(fs.readdirSync('./5000/'));
+});
+
 app.get('/borrar', function(req, res) {
   childProcess.execSync("rm ./5000/images/"+req.query.foto);
   childProcess.execSync("rm ./5000/thumbnails/"+req.query.foto);
