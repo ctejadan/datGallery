@@ -17,12 +17,13 @@ class SelectGallery extends React.Component {
   }
 
 componentWillReceiveProps(){
-  
+
 }
 
   onClickOpcion(option){
     let thisSave1 = this;
     console.log("aqui 1"+ this.state.seleccion);
+
     thisSave1.setState({seleccion : true});
     componentWillReceiveProps();
     console.log("aqui 2"+ this.state.seleccion);

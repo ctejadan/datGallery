@@ -17,9 +17,10 @@ class App extends React.Component {
     this.state = {
                   titulo: "Dat Gallery2",
                   cambios:0,
-                  seleccion: false
+                  seleccion: false,
+                  seleccionado: ""
     };
-    this.actualiza = this.actualiza.bind(this);
+    this.updateSeleccionado = this.updateSeleccionado.bind(this);
   }
   getDefaultProps() {
 
@@ -27,21 +28,35 @@ class App extends React.Component {
   actualiza(){
     this.setState({cambios:Math.random()});
   }
+  toggleSeleccion(){
+      this.setState({seleccion:!this.state.seleccion})
+      console.log(this.state.seleccion);
+  }
+  updateSeleccionado(a){
+      this.setState({seleccionado:a})
+  }
   render(){
 
-    let componentConfig = { iconFiletypes: ['.jpg', '.png', '.gif'], showFiletypeIcon: true, postUrl: '/upload' };
-    console.log(this.state.seleccion);
-    return (<div>
+    let componentConfig = { iconFiletypes: ['.jpg', '.png', '.gif'], showFiletypeIcon: true, postUrl: '/upload?select='+ this.state.seleccionado };
 
+    let dropzone = ""
+    if(this.state.seleccionado!=""){
+      dropzone=(<div>
+                      <DropzoneComponent  className="center-block" config={componentConfig}
+                        eventHandlers={{ addedfile: (file) => console.log('okDrop!')}}
+                        djsConfig={{autoProcessQueue: true, createImageThumbnails: true}} seleccionado={this.state.seleccionado}/>
+                        <hr />
+                  </div>);
+    }
+
+
+    return (<div>
                 <div className="page-header" style={{textAlign: "center"}}>
                   <h1>{this.state.titulo}</h1>
                 </div>
-                {!this.state.seleccion && <SelectGallery/>}
-                {this.state.seleccion && <DropzoneComponent  className="center-block" config={componentConfig}
-                                  eventHandlers={{ addedfile: (file) => this.actualiza()}}
-                                  djsConfig={{autoProcessQueue: true, createImageThumbnails: true}} />}
-                <hr />
-                {this.state.seleccion && <Gallery actualiza={this.state.cambios}/>}
+                {dropzone}
+                <Gallery seleccion={this.state.seleccion} seleccionado={this.state.seleccionado} updateOpcion={this.updateSeleccionado} />
+
           </div>);
   }
 }

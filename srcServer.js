@@ -12,12 +12,11 @@ app.use(sesion());
 
 app.post('/upload', (req, res)=> {
   let file= req.files.file;
-  console.log(file.name);
-  file.mv("./5000/images/"+file.name, a=>console.log(a));
-  res.send(fs.readdirSync('./5000/images/'));
+  file.mv("./5000/Images/"+req.query.select+"/"+file.name, a=>console.log(a));
+  res.send(fs.readdirSync('./5000/Images/'+req.query.select+'/'));
 
 easyimg.thumbnail({
-       src:'./5000/images/'+file.name, dst:'./5000/thumbnails/'+file.name,
+       src:'./5000/Images/'+req.query.select+'/'+file.name, dst:'./5000/Thumbnails/'+req.query.select+'/'+file.name,
        width:150, height:99
 //       cropwidth:200, cropheight:200,
 //       x:0, y:0
@@ -38,25 +37,25 @@ app.get('/', function(req, res) {
 });
 
 app.get('/fotos', function(req, res) {
-  setTimeout(() => {res.sendFile(path.join( __dirname, '5000/thumbnails/'+ req.query.foto ));}, 200);
+  setTimeout(() => {res.sendFile(path.join( __dirname, '5000/Thumbnails/'+ req.query.foto ));}, 200);
 });
 
 app.get('/pictures', function(req, res) {
-  setTimeout(() => {res.sendFile(path.join( __dirname, '5000/images/'+ req.query.picture ));}, 200);
+  setTimeout(() => {res.sendFile(path.join( __dirname, '5000/Images/'+ req.query.picture ));}, 200);
 });
 
 app.get('/imagenes', function(req, res) {
-  res.send(fs.readdirSync('./5000/images/'));
+  res.send(fs.readdirSync('./5000/Images/'+req.query.select));
 });
 
 app.get('/opciones', function(req, res) {
-  res.send(fs.readdirSync('./5000/'));
+  res.send(fs.readdirSync('./5000/Images/'));
 });
 
-app.get('/borrar', function(req, res) {
-  childProcess.execSync("rm ./5000/images/"+req.query.foto);
-  childProcess.execSync("rm ./5000/thumbnails/"+req.query.foto);
-  res.send(fs.readdirSync('./5000/images/'));
+app.get('/borrar', function(req, res, seleccionado) {
+  childProcess.execSync("rm ./5000/"+req.query.select+"/images/"+req.query.foto);
+  childProcess.execSync("rm ./5000/"+req.query.select+"/thumbnails/"+req.query.foto);
+  res.send(fs.readdirSync('./5000/'+req.query.select+'/images/'));
 });
 
 app.listen(port, function(err) {
