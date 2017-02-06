@@ -20,14 +20,15 @@ class App extends React.Component {
                   seleccion: false,
                   seleccionado: ""
     };
+    this.actualiza = this.actualiza.bind(this);
     this.updateSeleccionado = this.updateSeleccionado.bind(this);
   }
-  getDefaultProps() {
-
-  }
   actualiza(){
+    console.log('ACTUALIZEISHON');
     this.setState({cambios:Math.random()});
+    console.log(''+this.state.cambios);
   }
+
   toggleSeleccion(){
       this.setState({seleccion:!this.state.seleccion})
       console.log(this.state.seleccion);
@@ -43,7 +44,7 @@ class App extends React.Component {
     if(this.state.seleccionado!=""){
       dropzone=(<div>
                       <DropzoneComponent  className="center-block" config={componentConfig}
-                        eventHandlers={{ addedfile: (file) => console.log('okDrop!')}}
+                        eventHandlers={{ addedfile: (file) => this.actualiza()}}
                         djsConfig={{autoProcessQueue: true, createImageThumbnails: true}} seleccionado={this.state.seleccionado}/>
                         <hr />
                   </div>);
@@ -55,7 +56,7 @@ class App extends React.Component {
                   <h1>{this.state.titulo}</h1>
                 </div>
                 {dropzone}
-                <Gallery seleccion={this.state.seleccion} seleccionado={this.state.seleccionado} updateOpcion={this.updateSeleccionado} />
+                <Gallery  actualiza={this.state.cambios} seleccion={this.state.seleccion} seleccionado={this.state.seleccionado} updateOpcion={this.updateSeleccionado} />
 
           </div>);
   }

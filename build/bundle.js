@@ -126,17 +126,17 @@ var App = function (_React$Component) {
       seleccion: false,
       seleccionado: ""
     };
+    _this.actualiza = _this.actualiza.bind(_this);
     _this.updateSeleccionado = _this.updateSeleccionado.bind(_this);
     return _this;
   }
 
   _createClass(App, [{
-    key: 'getDefaultProps',
-    value: function getDefaultProps() {}
-  }, {
     key: 'actualiza',
     value: function actualiza() {
+      console.log('ACTUALIZEISHON');
       this.setState({ cambios: Math.random() });
+      console.log('' + this.state.cambios);
     }
   }, {
     key: 'toggleSeleccion',
@@ -152,6 +152,7 @@ var App = function (_React$Component) {
   }, {
     key: 'render',
     value: function render() {
+      var _this2 = this;
 
       var componentConfig = { iconFiletypes: ['.jpg', '.png', '.gif'], showFiletypeIcon: true, postUrl: '/upload?select=' + this.state.seleccionado };
 
@@ -162,7 +163,7 @@ var App = function (_React$Component) {
           null,
           _react2.default.createElement(_reactDropzoneComponent2.default, { className: 'center-block', config: componentConfig,
             eventHandlers: { addedfile: function addedfile(file) {
-                return console.log('okDrop!');
+                return _this2.actualiza();
               } },
             djsConfig: { autoProcessQueue: true, createImageThumbnails: true }, seleccionado: this.state.seleccionado }),
           _react2.default.createElement('hr', null)
@@ -182,7 +183,7 @@ var App = function (_React$Component) {
           )
         ),
         dropzone,
-        _react2.default.createElement(_Gallery2.default, { seleccion: this.state.seleccion, seleccionado: this.state.seleccionado, updateOpcion: this.updateSeleccionado })
+        _react2.default.createElement(_Gallery2.default, { actualiza: this.state.cambios, seleccion: this.state.seleccion, seleccionado: this.state.seleccionado, updateOpcion: this.updateSeleccionado })
       );
     }
   }]);
@@ -20162,14 +20163,29 @@ var Gallery = function (_React$Component) {
       });
     }
   }, {
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps() {
+      var _this2 = this;
+
+      //ACTUALIZA AL MOMENTO DE SUBIR
+      var thisSave1 = this;
+      setTimeout(function () {
+        $.get("http://localhost:3000/imagenes", { select: _this2.props.seleccionado }, function (data) {
+          thisSave1.setState({
+            imagen: data
+          });
+        });
+      }, 2000);
+    }
+  }, {
     key: 'onClickBorrar',
     value: function onClickBorrar(a) {
-      var _this2 = this;
+      var _this3 = this;
 
       if (confirm("Seguro que desea eliminar la imagen?") == true) {
         (function () {
-          var thisSave1 = _this2;
-          $.get("http://localhost:3000/borrar", { foto: a }, function (data) {
+          var thisSave1 = _this3;
+          $.get("http://localhost:3000/borrar", { foto: a, select: _this3.props.seleccionado }, function (data) {
             thisSave1.setState({ imagen: data });
           });
         })();
@@ -20199,7 +20215,7 @@ var Gallery = function (_React$Component) {
   }, {
     key: 'render',
     value: function render() {
-      var _this3 = this;
+      var _this4 = this;
 
       var opciones = this.state.opciones;
       var option = [];
@@ -20207,13 +20223,17 @@ var Gallery = function (_React$Component) {
         opciones.forEach(function (a) {
           return option.push(_react2.default.createElement(
             'tr',
-            { onClick: function onClick() {
-                return _this3.onClickOpcion(a);
+            { style: { cursor: "pointer" }, onClick: function onClick() {
+                return _this4.onClickOpcion(a);
               } },
             _react2.default.createElement(
               'td',
               null,
-              a
+              _react2.default.createElement(
+                'p',
+                { style: { marginLeft: "5%" } },
+                a
+              )
             )
           ));
         });
@@ -20227,23 +20247,32 @@ var Gallery = function (_React$Component) {
         { className: 'col-sm-2' },
         _react2.default.createElement(
           'table',
-          { className: 'table table-striped' },
+          { className: 'table' },
           _react2.default.createElement(
             'tbody',
             null,
             option,
             _react2.default.createElement(
               'tr',
-              null,
+              { style: { cursor: "pointer" } },
               _react2.default.createElement(
                 'td',
                 null,
                 _react2.default.createElement(
-                  'span',
-                  { className: 'glyphicon glyphicon-plus', style: { color: "green", marginTop: "1%", marginLeft: "2%" } },
-                  ' '
+                  'p',
+                  null,
+                  _react2.default.createElement(
+                    'span',
+                    { className: 'glyphicon glyphicon-plus', style: { color: "green", marginTop: "1%", marginLeft: "5%" } },
+                    ' '
+                  )
                 )
               )
+            ),
+            _react2.default.createElement(
+              'tr',
+              null,
+              _react2.default.createElement('td', null)
             )
           )
         )
@@ -20269,17 +20298,17 @@ var Gallery = function (_React$Component) {
               return _react2.default.createElement(
                 'div',
                 { key: i2 },
-                _react2.default.createElement('img', { src: "/fotos?foto=" + _this3.props.seleccionado + "/" + a, style: { marginTop: "1%" }, onClick: function onClick() {
-                    return _this3.onClickAmpliar(a);
+                _react2.default.createElement('img', { src: "/fotos?foto=" + _this4.props.seleccionado + "/" + a, style: { marginTop: "1%" }, onClick: function onClick() {
+                    return _this4.onClickAmpliar(a);
                   } }),
                 _react2.default.createElement(
                   'p',
                   null,
-                  _this3.cutName(a),
+                  _this4.cutName(a),
                   _react2.default.createElement(
                     'span',
                     { className: 'glyphicon glyphicon-remove', style: { marginTop: "1%", marginLeft: "2%" }, onClick: function onClick() {
-                        return _this3.onClickBorrar(a);
+                        return _this4.onClickBorrar(a);
                       } },
                     ' '
                   )

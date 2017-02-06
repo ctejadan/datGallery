@@ -13,7 +13,6 @@ app.use(sesion());
 app.post('/upload', (req, res)=> {
   let file= req.files.file;
   file.mv("./5000/Images/"+req.query.select+"/"+file.name, a=>console.log(a));
-  res.send(fs.readdirSync('./5000/Images/'+req.query.select+'/'));
 
 easyimg.thumbnail({
        src:'./5000/Images/'+req.query.select+'/'+file.name, dst:'./5000/Thumbnails/'+req.query.select+'/'+file.name,
@@ -28,6 +27,7 @@ easyimg.thumbnail({
       console.log(err);
     }
   );
+res.send(fs.readdirSync('./5000/Images/'+req.query.select));
 });
 
 app.use(express.static(__dirname + '/build'))
@@ -52,10 +52,11 @@ app.get('/opciones', function(req, res) {
   res.send(fs.readdirSync('./5000/Images/'));
 });
 
-app.get('/borrar', function(req, res, seleccionado) {
-  childProcess.execSync("rm ./5000/"+req.query.select+"/images/"+req.query.foto);
-  childProcess.execSync("rm ./5000/"+req.query.select+"/thumbnails/"+req.query.foto);
-  res.send(fs.readdirSync('./5000/'+req.query.select+'/images/'));
+app.get('/borrar', function(req, res) {
+  console.log(req.query.select);
+  childProcess.execSync("rm ./5000/Images/"+req.query.select+"/"+req.query.foto);
+  childProcess.execSync("rm ./5000/Thumbnails/"+req.query.select+"/"+req.query.foto);
+  res.send(fs.readdirSync('./5000/Images/'+req.query.select));
 });
 
 app.listen(port, function(err) {

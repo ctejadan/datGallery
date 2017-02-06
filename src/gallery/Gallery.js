@@ -11,10 +11,21 @@ class Gallery extends React.Component {
     $.get("http://localhost:3000/opciones", data =>{thisSave1.setState({opciones : data});});
      }
 
+  componentWillReceiveProps() {//ACTUALIZA AL MOMENTO DE SUBIR
+      let thisSave1 = this;
+      setTimeout(() => {
+        $.get("http://localhost:3000/imagenes",{select: this.props.seleccionado}, data =>{
+            thisSave1.setState({
+                imagen : data
+            });
+        });
+       }, 2000);
+    }
+
   onClickBorrar(a) {
     if (confirm("Seguro que desea eliminar la imagen?") == true) {
         let thisSave1 = this;
-        $.get("http://localhost:3000/borrar",{foto:a}, data =>{thisSave1.setState({imagen:data});});
+        $.get("http://localhost:3000/borrar",{foto:a, select: this.props.seleccionado}, data =>{thisSave1.setState({imagen:data});});
     }
   }
   onClickAmpliar(a) {window.open('/pictures?picture='+this.props.seleccionado+'/'+a, '_blank');}
@@ -37,17 +48,18 @@ class Gallery extends React.Component {
     let opciones = this.state.opciones;
     let option = [];
     if (opciones){
-      opciones.forEach((a) => option.push(<tr onClick={()=>this.onClickOpcion(a)}><td>{a}</td></tr>));
+      opciones.forEach((a) => option.push(<tr style={{cursor: "pointer"}} onClick={()=>this.onClickOpcion(a)}><td><p style={{marginLeft: "5%"}}>{a}</p></td></tr>));
     }
 
     let imagen=this.state.imagen;
     let array5= [[],[],[],[],[]];
 
     let menu = (<div className="col-sm-2">
-                    <table className="table table-striped">
+                    <table className="table">
                         <tbody>
                             {option}
-                            <tr><td><span className="glyphicon glyphicon-plus" style={{color: "green", marginTop: "1%", marginLeft: "2%"}}> </span></td></tr>
+                            <tr style={{cursor: "pointer"}}><td><p><span className="glyphicon glyphicon-plus" style={{color: "green", marginTop: "1%", marginLeft: "5%"}}> </span></p></td></tr>
+                            <tr><td></td></tr>
                         </tbody>
                     </table>
                 </div>);
