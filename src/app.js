@@ -7,8 +7,8 @@ import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import DropzoneComponent from 'react-dropzone-component';
 import '../node_modules/react-dropzone-component/styles/filepicker.css';
 import '../node_modules/dropzone/dist/min/dropzone.min.css';
-import Gallery from './gallery/Gallery.js'
-import SelectGallery from './selectGallery/SelectGallery.js'
+import Gallery from './gallery/Gallery.js';
+import SelectGallery from './selectGallery/SelectGallery.js';
 
 class App extends React.Component {
 
@@ -50,8 +50,7 @@ class App extends React.Component {
                   </div>);
     }
 
-
-    return (<div>
+    return (<div className="container">
                 <div className="page-header" style={{textAlign: "center"}}>
                   <h1>{this.state.titulo}</h1>
                 </div>
