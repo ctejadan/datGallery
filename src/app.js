@@ -55,7 +55,7 @@ class App extends React.Component {
                   <h1>{this.state.titulo}</h1>
                 </div>
                 {dropzone}
-                <Gallery  actualiza={this.state.cambios} seleccion={this.state.seleccion} seleccionado={this.state.seleccionado} updateOpcion={this.updateSeleccionado} />
+                <Gallery  actualiza={this.state.cambios} seleccion={this.state.seleccion} seleccionado={this.state.seleccionado} updateSeleccionado={this.updateSeleccionado} />
 
           </div>);
   }

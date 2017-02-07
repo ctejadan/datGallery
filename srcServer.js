@@ -53,7 +53,12 @@ app.get('/pictures', function(req, res) {
 
 
 app.get('/imagenes', function(req, res) {
-  res.send(fs.readdirSync('./5000/Images/'+jsonFolders[req.query.select]));
+  if(fs.readdirSync('./5000/Images/'+jsonFolders[req.query.select])){
+      res.send(fs.readdirSync('./5000/Images/'+jsonFolders[req.query.select]));
+  }
+  else {
+    res.send('error')
+  }
 });
 
 app.get('/new', function(req, res) {
@@ -78,6 +83,14 @@ app.get('/new', function(req, res) {
   else {
     console.log('YA EXISTE :C');
   }
+
+});
+
+app.get('/removeFolder', function(req, res) {
+  console.log(jsonFolders[req.query.select]);
+  delete jsonFolders[req.query.select];
+  fs.writeFile('jsonFolders.json', JSON.stringify(jsonFolders), 'utf8');
+  res.send(Object.keys(jsonFolders));
 
 });
 

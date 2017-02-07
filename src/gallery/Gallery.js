@@ -49,13 +49,16 @@ class Gallery extends React.Component {
     let thisSave1 = this;
     $.get("http://localhost:3000/imagenes",{select: option}, data =>{
       thisSave1.setState({imagen : data});
-      thisSave1.props.updateOpcion(option);
+      thisSave1.props.updateSeleccionado(option);
     });
   }
 
-  onClickRemoveFolder(option){
+  onClickRemoveFolder(){
+    let thisSave1 = this;
+    $.get("http://localhost:3000/removeFolder", {select: this.props.seleccionado}, data =>{thisSave1.setState({opciones : data});});
+    thisSave1.props.updateSeleccionado("");
+    console.log(this.props.seleccionado);
 
-    console.log(option);
   }
 
   cutName(str) {
@@ -65,20 +68,15 @@ class Gallery extends React.Component {
   }
   render () {
 
+    let borrarCarpeta = '';
     let opciones = this.state.opciones;
     let option = [];
     if (opciones){
       opciones.forEach((a) => option.push(
         <tr style={{cursor: "pointer"}}>
           <td>
-            <div className="col-xs-8">
-              <p style={{marginLeft: "5%"}} onClick={()=>this.onClickOpcion(a)}>
+            <div className="col-xs-12" onClick={()=>this.onClickOpcion(a)} style={{color: "#5C5C5C"}}>
                 {a}
-              </p>
-            </div>
-            <div className="col-xs-2">
-              <span onClick={()=>this.onClickRemoveFolder(a)} className="glyphicon glyphicon-remove" >
-              </span>
             </div>
           </td>
         </tr>));
@@ -86,38 +84,39 @@ class Gallery extends React.Component {
 
     let imagen=this.state.imagen;
     let array5= [[],[],[],[],[]];
-
     let menu = (<div className="col-sm-2">
                     <table className="table">
                         <tbody>
                           <tr style={{cursor: "pointer"}}><td>
-                            <p>
                               <input placeholder="Agregar" onBlur={this.onBlur.bind(this)} className="form-control" type="text" style={{width: "75%", marginLeft: "5%", display: "inline"}}/>
-                              <span onClick={()=>this.onClickAdd()} className="glyphicon glyphicon-plus" style={{marginTop: "1%", marginLeft: "5%"}}> </span>
-                            </p>
+                              <span onClick={()=>this.onClickAdd()} className="glyphicon glyphicon-plus" style={{color: "#5C5C5C", marginTop: "1%", marginLeft: "5%"}}> </span>
                           </td></tr>
                           {option}
-                          <tr><td></td></tr>
                         </tbody>
                     </table>
                 </div>);
 
     let printFotos =(<h2>Elije una opcion</h2>);
 
-    if(imagen && this.props.seleccionado!=''){
+    if(this.props.seleccionado!=''){
+      if (!this.state.imagen[0]) {
+        printFotos =(<h2 onClick={()=>this.onClickRemoveFolder()} style={{cursor: "pointer", textAlign: "center"}}><span className="glyphicon glyphicon-remove" ></span> Haz click para eliminar la carpeta</h2>);
+      }
+      else{
           let numFotos= imagen.length;
           imagen.forEach( (a,i) => array5[i%5].push(a));
-
           printFotos = array5.map( (b,i)=>(
               <div key={i} className="col-sm-2 col-xs-4">
                   {b.map( (a,i2)=>(<div key={i2}>
-                        <img src={"/fotos?foto="+this.props.seleccionado+"/"+a} style={{marginTop: "1%"}} onClick={()=>this.onClickAmpliar(a)}/>
+                        <img src={"/fotos?foto="+this.props.seleccionado+"/"+a} style={{marginTop: "1%", cursor: "pointer", borderRadius: "20px"}} onClick={()=>this.onClickAmpliar(a)}/>
                         <p>{this.cutName(a)}
                             <span className="glyphicon glyphicon-remove" style={{marginTop: "1%", marginLeft: "2%"}} onClick={()=>this.onClickBorrar(a)}> </span>
                         </p>
                   </div>))}
               </div>));
       }
+    }
+
       return(
         <div className="row">
               {menu}

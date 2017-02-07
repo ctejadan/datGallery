@@ -3,3 +3,12 @@ html,body {
     margin:0;
     padding:0;
 }
+
+th, tr, td {
+    border-bottom: 1px solid #f7f7f7;
+}
+
+
+tr:hover td {
+background-color: #F9F9F9;
+}
