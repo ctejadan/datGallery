@@ -24,9 +24,7 @@ class App extends React.Component {
     this.updateSeleccionado = this.updateSeleccionado.bind(this);
   }
   actualiza(){
-    console.log('ACTUALIZEISHON');
     this.setState({cambios:Math.random()});
-    console.log(''+this.state.cambios);
   }
 
   toggleSeleccion(){
@@ -34,11 +32,12 @@ class App extends React.Component {
       console.log(this.state.seleccion);
   }
   updateSeleccionado(a){
-      this.setState({seleccionado:a})
+    this.setState({seleccionado: a})
   }
+
   render(){
 
-    let componentConfig = { iconFiletypes: ['.jpg', '.png', '.gif'], showFiletypeIcon: true, postUrl: '/upload?select='+ this.state.seleccionado };
+    let componentConfig = { iconFiletypes: ['.jpg', '.png', '.gif'], maxFileSize: 7, showFiletypeIcon: true, postUrl: '/upload?select='+ this.state.seleccionado };
 
     let dropzone = ""
     if(this.state.seleccionado!=""){

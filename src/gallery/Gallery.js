@@ -11,19 +11,20 @@ class Gallery extends React.Component {
   componentWillMount() {//Obtiene imagenes en la carpeta 5000
     let thisSave1 = this;
     $.get("http://localhost:3000/opciones", data =>{thisSave1.setState({opciones : data});});
+    $.get("http://localhost:3000/aleatorio", data =>{thisSave1.setState({imagen : data});});
 
      }
 
-  componentWillReceiveProps() {//ACTUALIZA AL MOMENTO DE SUBIR
-      let thisSave1 = this;
-      setTimeout(() => {
-        $.get("http://localhost:3000/imagenes",{select: this.props.seleccionado}, data =>{
-            thisSave1.setState({
-                imagen : data
-            });
-        });
-       }, 2000);
-    }
+     componentWillReceiveProps() {//ACTUALIZA AL MOMENTO DE SUBIR
+           let thisSave1 = this;
+           setTimeout(() => {
+             $.get("http://localhost:3000/imagenes",{select: this.props.seleccionado}, data =>{
+                 thisSave1.setState({
+                     imagen : data
+                 });
+             });
+            }, 2000);
+         }
 
   onClickBorrar(a) {
     if (confirm("Seguro que desea eliminar la imagen?") == true) {
@@ -33,15 +34,27 @@ class Gallery extends React.Component {
   }
   onClickAmpliar(a) {window.open('/pictures?picture='+this.props.seleccionado+'/'+a, '_blank');}
 
+  onClickAmpliarRandom(a) {
+    let separator = a.split("/");
+    window.open('/pictures?picture='+separator[0]+"/"+separator[1], '_blank');}
+
   onClickAdd() {
-    if(this.state.typed!=""){
-      let thisSave1 = this;
-      $.get("http://localhost:3000/new", {new:this.state.typed}, data =>{thisSave1.setState({opciones : data})});
+    let str=this.state.typed.trim();
+    if(str!="" && str!=" "){
+      if(str.length>15){
+        alert('Nombre excede el largo (15 caracteres)');
+      }
+      else{
+        let thisSave1 = this;
+        thisSave1.setState({opciones : ""});
+        $.get("http://localhost:3000/new", {new:str}, data =>{thisSave1.setState({opciones : data})});
+        //$.get("http://localhost:3000/opciones", data =>{thisSave1.setState({opciones : data});});
+      }
     }
   }
 
   onBlur(event) {
-      this.setState({typed: event.target.value});
+    this.setState({typed: event.target.value});
     }
 
   onClickOpcion(option){
@@ -55,9 +68,10 @@ class Gallery extends React.Component {
 
   onClickRemoveFolder(){
     let thisSave1 = this;
-    $.get("http://localhost:3000/removeFolder", {select: this.props.seleccionado}, data =>{thisSave1.setState({opciones : data});});
+    $.get("http://localhost:3000/removeFolder", {select: this.props.seleccionado}, data =>{thisSave1.setState({opciones : data, imagen : ""});});
     thisSave1.props.updateSeleccionado("");
-    console.log(this.props.seleccionado);
+    $.get("http://localhost:3000/aleatorio", data =>{thisSave1.setState({imagen : data});});
+    //console.log(this.props.seleccionado);
 
   }
 
@@ -72,25 +86,43 @@ class Gallery extends React.Component {
     let opciones = this.state.opciones;
     let option = [];
     if (opciones){
-      opciones.forEach((a) => option.push(
-        <tr style={{cursor: "pointer"}}>
-          <td>
-            <div className="col-xs-12" onClick={()=>this.onClickOpcion(a)} style={{color: "#5C5C5C"}}>
-                {a}
-            </div>
-          </td>
-        </tr>));
+
+      opciones.forEach((a) => {
+        if(a==this.props.seleccionado){
+          option.push(
+            <tr style={{cursor: "pointer"}}>
+              <td style={{background: "#F9F9F9"}}>
+                <div className="col-xs-12" onClick={()=>this.onClickOpcion(a)} style={{color: "#000"}}>
+                    {a}
+                </div>
+             </td>
+            </tr>);
+        }
+        else{
+          option.push(
+            <tr style={{cursor: "pointer"}}>
+              <td>
+                <div className="col-xs-12" onClick={()=>this.onClickOpcion(a)} style={{color: "#696969"}}>
+                    {a}
+                </div>
+             </td>
+            </tr>);
+        }
+
+        });
+
+        option.unshift(<tr style={{cursor: "pointer"}}><td>
+                <input placeholder="Agregar" onBlur={this.onBlur.bind(this)} className="form-control" type="text" style={{width: "75%", marginLeft: "5%", display: "inline"}}/>
+                <span onClick={()=>this.onClickAdd()} className="glyphicon glyphicon-plus" style={{color: "#5C5C5C", marginTop: "1%", marginLeft: "5%"}}> </span>
+            </td></tr>);
     }
+
 
     let imagen=this.state.imagen;
     let array5= [[],[],[],[],[]];
     let menu = (<div className="col-sm-2">
                     <table className="table">
                         <tbody>
-                          <tr style={{cursor: "pointer"}}><td>
-                              <input placeholder="Agregar" onBlur={this.onBlur.bind(this)} className="form-control" type="text" style={{width: "75%", marginLeft: "5%", display: "inline"}}/>
-                              <span onClick={()=>this.onClickAdd()} className="glyphicon glyphicon-plus" style={{color: "#5C5C5C", marginTop: "1%", marginLeft: "5%"}}> </span>
-                          </td></tr>
                           {option}
                         </tbody>
                     </table>
@@ -98,7 +130,7 @@ class Gallery extends React.Component {
 
     let printFotos =(<h2>Elije una opcion</h2>);
 
-    if(this.props.seleccionado!=''){
+    if(this.props.seleccionado!==""){
       if (!this.state.imagen[0]) {
         printFotos =(<h2 onClick={()=>this.onClickRemoveFolder()} style={{cursor: "pointer", textAlign: "center"}}><span className="glyphicon glyphicon-remove" ></span> Haz click para eliminar la carpeta</h2>);
       }
@@ -116,6 +148,24 @@ class Gallery extends React.Component {
               </div>));
       }
     }
+
+    else {
+      if(imagen){
+        let aux=[];
+        let i=0;
+        let a ="";
+        for (i = 0; i < 20; i++) {
+          aux.push(imagen[Math.floor(1 + Math.random() * imagen.length-1)]);
+        }
+        aux.forEach( (a,i) => array5[i%5].push(a));
+        printFotos = array5.map( (b,i)=>(
+            <div key={i} className="col-sm-2 col-xs-4">
+                {b.map( (a,i2)=>(<div key={i2}>
+                      <img src={"/fotos?foto="+a} style={{marginTop: "1%", marginBottom: "10%", cursor: "pointer", borderRadius: "20px"}} onClick={()=>this.onClickAmpliarRandom(a)}/>
+                </div>))}
+            </div>));
+      }
+  }
 
       return(
         <div className="row">

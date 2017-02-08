@@ -20037,6 +20037,9 @@ var Gallery = function (_React$Component) {
       $.get("http://localhost:3000/opciones", function (data) {
         thisSave1.setState({ opciones: data });
       });
+      $.get("http://localhost:3000/aleatorio", function (data) {
+        thisSave1.setState({ imagen: data });
+      });
     }
   }, {
     key: 'componentWillReceiveProps',
@@ -20073,17 +20076,30 @@ var Gallery = function (_React$Component) {
       window.open('/pictures?picture=' + this.props.seleccionado + '/' + a, '_blank');
     }
   }, {
+    key: 'onClickAmpliarRandom',
+    value: function onClickAmpliarRandom(a) {
+      var separator = a.split("/");
+      window.open('/pictures?picture=' + separator[0] + "/" + separator[1], '_blank');
+    }
+  }, {
     key: 'onClickAdd',
     value: function onClickAdd() {
       var _this4 = this;
 
-      if (this.state.typed != "") {
-        (function () {
-          var thisSave1 = _this4;
-          $.get("http://localhost:3000/new", { new: _this4.state.typed }, function (data) {
-            thisSave1.setState({ opciones: data });
-          });
-        })();
+      var str = this.state.typed.trim();
+      if (str != "" && str != " ") {
+        if (str.length > 15) {
+          alert('Nombre excede el largo (15 caracteres)');
+        } else {
+          (function () {
+            var thisSave1 = _this4;
+            thisSave1.setState({ opciones: "" });
+            $.get("http://localhost:3000/new", { new: str }, function (data) {
+              thisSave1.setState({ opciones: data });
+            });
+            //$.get("http://localhost:3000/opciones", data =>{thisSave1.setState({opciones : data});});
+          })();
+        }
       }
     }
   }, {
@@ -20106,10 +20122,13 @@ var Gallery = function (_React$Component) {
     value: function onClickRemoveFolder() {
       var thisSave1 = this;
       $.get("http://localhost:3000/removeFolder", { select: this.props.seleccionado }, function (data) {
-        thisSave1.setState({ opciones: data });
+        thisSave1.setState({ opciones: data, imagen: "" });
       });
       thisSave1.props.updateSeleccionado("");
-      console.log(this.props.seleccionado);
+      $.get("http://localhost:3000/aleatorio", function (data) {
+        thisSave1.setState({ imagen: data });
+      });
+      //console.log(this.props.seleccionado);
     }
   }, {
     key: 'cutName',
@@ -20126,23 +20145,59 @@ var Gallery = function (_React$Component) {
       var opciones = this.state.opciones;
       var option = [];
       if (opciones) {
+
         opciones.forEach(function (a) {
-          return option.push(_react2.default.createElement(
-            'tr',
-            { style: { cursor: "pointer" } },
-            _react2.default.createElement(
-              'td',
-              null,
+          if (a == _this5.props.seleccionado) {
+            option.push(_react2.default.createElement(
+              'tr',
+              { style: { cursor: "pointer" } },
               _react2.default.createElement(
-                'div',
-                { className: 'col-xs-12', onClick: function onClick() {
-                    return _this5.onClickOpcion(a);
-                  }, style: { color: "#5C5C5C" } },
-                a
+                'td',
+                { style: { background: "#F9F9F9" } },
+                _react2.default.createElement(
+                  'div',
+                  { className: 'col-xs-12', onClick: function onClick() {
+                      return _this5.onClickOpcion(a);
+                    }, style: { color: "#000" } },
+                  a
+                )
               )
-            )
-          ));
+            ));
+          } else {
+            option.push(_react2.default.createElement(
+              'tr',
+              { style: { cursor: "pointer" } },
+              _react2.default.createElement(
+                'td',
+                null,
+                _react2.default.createElement(
+                  'div',
+                  { className: 'col-xs-12', onClick: function onClick() {
+                      return _this5.onClickOpcion(a);
+                    }, style: { color: "#696969" } },
+                  a
+                )
+              )
+            ));
+          }
         });
+
+        option.unshift(_react2.default.createElement(
+          'tr',
+          { style: { cursor: "pointer" } },
+          _react2.default.createElement(
+            'td',
+            null,
+            _react2.default.createElement('input', { placeholder: 'Agregar', onBlur: this.onBlur.bind(this), className: 'form-control', type: 'text', style: { width: "75%", marginLeft: "5%", display: "inline" } }),
+            _react2.default.createElement(
+              'span',
+              { onClick: function onClick() {
+                  return _this5.onClickAdd();
+                }, className: 'glyphicon glyphicon-plus', style: { color: "#5C5C5C", marginTop: "1%", marginLeft: "5%" } },
+              ' '
+            )
+          )
+        ));
       }
 
       var imagen = this.state.imagen;
@@ -20156,22 +20211,6 @@ var Gallery = function (_React$Component) {
           _react2.default.createElement(
             'tbody',
             null,
-            _react2.default.createElement(
-              'tr',
-              { style: { cursor: "pointer" } },
-              _react2.default.createElement(
-                'td',
-                null,
-                _react2.default.createElement('input', { placeholder: 'Agregar', onBlur: this.onBlur.bind(this), className: 'form-control', type: 'text', style: { width: "75%", marginLeft: "5%", display: "inline" } }),
-                _react2.default.createElement(
-                  'span',
-                  { onClick: function onClick() {
-                      return _this5.onClickAdd();
-                    }, className: 'glyphicon glyphicon-plus', style: { color: "#5C5C5C", marginTop: "1%", marginLeft: "5%" } },
-                  ' '
-                )
-              )
-            ),
             option
           )
         )
@@ -20183,7 +20222,7 @@ var Gallery = function (_React$Component) {
         'Elije una opcion'
       );
 
-      if (this.props.seleccionado != '') {
+      if (this.props.seleccionado !== "") {
         if (!this.state.imagen[0]) {
           printFotos = _react2.default.createElement(
             'h2',
@@ -20221,6 +20260,33 @@ var Gallery = function (_React$Component) {
                       ' '
                     )
                   )
+                );
+              })
+            );
+          });
+        }
+      } else {
+        if (imagen) {
+          var aux = [];
+          var i = 0;
+          var a = "";
+          for (i = 0; i < 20; i++) {
+            aux.push(imagen[Math.floor(1 + Math.random() * imagen.length - 1)]);
+          }
+          aux.forEach(function (a, i) {
+            return array5[i % 5].push(a);
+          });
+          printFotos = array5.map(function (b, i) {
+            return _react2.default.createElement(
+              'div',
+              { key: i, className: 'col-sm-2 col-xs-4' },
+              b.map(function (a, i2) {
+                return _react2.default.createElement(
+                  'div',
+                  { key: i2 },
+                  _react2.default.createElement('img', { src: "/fotos?foto=" + a, style: { marginTop: "1%", marginBottom: "10%", cursor: "pointer", borderRadius: "20px" }, onClick: function onClick() {
+                      return _this5.onClickAmpliarRandom(a);
+                    } })
                 );
               })
             );
@@ -20763,7 +20829,7 @@ exports = module.exports = __webpack_require__(27)();
 
 
 // module
-exports.push([module.i, "/* Filepicker CSS */\n.filepicker {\n    font-family: sans-serif;\n}\n\ndiv.filepicker {\n    text-align: center;\n    padding: 5px;\n    background-color: #E1E1E1;\n    border-radius: 10px;\n    min-height: 60px;\n    border: 2px dashed #C7C7C7;\n}\n\n/* Icon */\n.filepicker-file-icon\n{\n    position: relative;\n\n    display: inline-block;\n\n    margin: 1.5em 0 2.5em 0;\n    padding-left: 45px;\n\n    color: black;\n}\n.filepicker-file-icon::before\n{\n    position: absolute;\n    top: -7px;\n    left: 0;\n\n    width: 29px;\n    height: 34px;\n\n    content: '';\n\n    border: solid 2px #7F7F7F;\n    border-radius: 0px;\n}\n.filepicker-file-icon::after\n{\n    font-size: 11px;\n    line-height: 1.3;\n\n    position: absolute;\n    top: 9px;\n    left: -4px;\n\n    padding: 0 2px;\n\n    content: 'file';\n    content: attr(data-filetype);\n    text-align: right;\n    letter-spacing: 1px;\n    text-transform: uppercase;\n\n    color: #fff;\n    background-color: #000;\n}\n.filepicker-file-icon .fileCorner\n{\n    position: absolute;\n    top: -7px;\n    left: 22px;\n\n    width: 0;\n    height: 0;\n\n    border-width: 11px 0 0 11px;\n    border-style: solid;\n    border-color: white transparent transparent #920035;\n}\n", ""]);
+exports.push([module.i, "/* Filepicker CSS */\n.filepicker {\n    font-family: sans-serif;\n}\n\ndiv.filepicker {\n    text-align: center;\n    padding: 5px;\n    background-color: #f0f0f0;\n    border-radius: 10px;\n    min-height: 60px;\n    border: 2px dashed #C7C7C7;\n}\n\n/* Icon */\n.filepicker-file-icon\n{\n    position: relative;\n\n    display: inline-block;\n\n    margin: 1.5em 0 2.5em 0;\n    padding-left: 45px;\n\n    color: black;\n}\n.filepicker-file-icon::before\n{\n    position: absolute;\n    top: -7px;\n    left: 0;\n\n    width: 29px;\n    height: 34px;\n\n    content: '';\n\n    border: solid 2px #7F7F7F;\n    border-radius: 0px;\n}\n.filepicker-file-icon::after\n{\n    font-size: 11px;\n    line-height: 1.3;\n\n    position: absolute;\n    top: 9px;\n    left: -4px;\n\n    padding: 0 2px;\n\n    content: 'file';\n    content: attr(data-filetype);\n    text-align: right;\n    letter-spacing: 1px;\n    text-transform: uppercase;\n\n    color: #fff;\n    background-color: #000;\n}\n.filepicker-file-icon .fileCorner\n{\n    position: absolute;\n    top: -7px;\n    left: 22px;\n\n    width: 0;\n    height: 0;\n\n    border-width: 11px 0 0 11px;\n    border-style: solid;\n    border-color: white transparent transparent #920035;\n}\n", ""]);
 
 // exports
 
@@ -20777,7 +20843,7 @@ exports = module.exports = __webpack_require__(27)();
 
 
 // module
-exports.push([module.i, "\nhtml,body {\n    margin:0;\n    padding:0;\n}\n\nth, tr, td {\n    border-bottom: 1px solid #f7f7f7;\n}\n\n\ntr:hover td {\nbackground-color: #F9F9F9;\n}\n", ""]);
+exports.push([module.i, "\nhtml,body {\n    margin:0;\n    padding:0;\n}\n\nth, tr, td {\n    border-bottom: 1px solid #f7f7f7;\n}\n\ntr:hover td {\nbackground-color: #F9F9F9;\n}\n", ""]);
 
 // exports
 
@@ -35040,9 +35106,7 @@ var App = function (_React$Component) {
   _createClass(App, [{
     key: 'actualiza',
     value: function actualiza() {
-      console.log('ACTUALIZEISHON');
       this.setState({ cambios: Math.random() });
-      console.log('' + this.state.cambios);
     }
   }, {
     key: 'toggleSeleccion',
@@ -35060,7 +35124,7 @@ var App = function (_React$Component) {
     value: function render() {
       var _this2 = this;
 
-      var componentConfig = { iconFiletypes: ['.jpg', '.png', '.gif'], showFiletypeIcon: true, postUrl: '/upload?select=' + this.state.seleccionado };
+      var componentConfig = { iconFiletypes: ['.jpg', '.png', '.gif'], maxFileSize: 7, showFiletypeIcon: true, postUrl: '/upload?select=' + this.state.seleccionado };
 
       var dropzone = "";
       if (this.state.seleccionado != "") {
