@@ -1,0 +1,11 @@
+#!/bin/sh
+
+for i in {4..50}
+do
+  if["$i"<"10"]; then
+  	mkdir -p C0$i
+  else
+	mkdir -p C$i
+  fi
+done
+
