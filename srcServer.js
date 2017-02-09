@@ -16,43 +16,46 @@ app.use(sesion());
 app.post('/upload', (req, res)=> {
   let file= req.files.file;
   let fileName = file.name.replace(/\s+/g, '');
-  file.mv("./5000/Images/"+jsonFolders[req.query.select]+"/"+fileName, a=>{console.log("CALLBACK, TIRAR FUNCION DE EASYIMAGE.INFO");});//THEN Y VERIFICAR
+  file.mv("./5000/Images/"+jsonFolders[req.query.select]+"/"+fileName, a=>{
 
+    easyimg.info('./5000/Images/'+jsonFolders[req.query.select]+'/'+fileName).then(
+      function(file) {
+        //console.log(file);
+        //console.log(file.size);
+        console.log(file.size);
+        if(file.size<8000000){
+          easyimg.thumbnail({
+                 src:'./5000/Images/'+jsonFolders[req.query.select]+'/'+fileName, dst:'./5000/Thumbnails/'+jsonFolders[req.query.select]+'/'+fileName,
+                 width:150, height:99
+          //       cropwidth:200, cropheight:200,
+          //       x:0, y:0
+              }).then(
+              function(image) {
+                 console.log('Resized and cropped: ' + image.width + ' x ' + image.height);
+              },
+              function (err) {
+                console.log(err);
+                childProcess.execSync("rm ./5000/Images/"+jsonFolders[req.query.select]+"/"+fileName);
 
+              }
+            );
 
-  setTimeout(() => {  easyimg.info('./5000/Images/'+jsonFolders[req.query.select]+'/'+fileName).then(
-    function(file) {
-      //console.log(file);
-      //console.log(file.size);
-      if(file.size<8000000){
+        }
 
-        easyimg.thumbnail({
-               src:'./5000/Images/'+jsonFolders[req.query.select]+'/'+fileName, dst:'./5000/Thumbnails/'+jsonFolders[req.query.select]+'/'+fileName,
-               width:150, height:99
-        //       cropwidth:200, cropheight:200,
-        //       x:0, y:0
-            }).then(
-            function(image) {
-               console.log('Resized and cropped: ' + image.width + ' x ' + image.height);
-            },
-            function (err) {
-              console.log(err);
-              childProcess.execSync("rm ./5000/Images/"+jsonFolders[req.query.select]+"/"+fileName);
-
-            }
-          );
-
-      }
-
-      else{
+        else{
+          //console.log("tiro else");
+          childProcess.execSync("rm ./5000/Images/"+jsonFolders[req.query.select]+"/"+fileName);
+        }
+      }, function (err) {
+        //console.log("no imagen");
         childProcess.execSync("rm ./5000/Images/"+jsonFolders[req.query.select]+"/"+fileName);
       }
-    }, function (err) {
-      console.log(err);
-    }
-  );}, 200);
+    );
 
-  setTimeout(() => {res.send(fs.readdirSync('./5000/Thumbnails/'+jsonFolders[req.query.select]));}, 200);
+  });//THEN Y VERIFICAR
+
+
+  res.send(fs.readdirSync('./5000/Thumbnails/'+jsonFolders[req.query.select]));
 });
 
 app.use(express.static(__dirname + '/build'))
