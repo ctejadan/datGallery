@@ -10,15 +10,15 @@ class Gallery extends React.Component {
   }
   componentWillMount() {//Obtiene imagenes en la carpeta 5000
     let thisSave1 = this;
-    $.get("http://localhost:3000/opciones", data =>{thisSave1.setState({opciones : data});});
-    $.get("http://localhost:3000/aleatorio", data =>{thisSave1.setState({imagen : data});});
+    $.get("/opciones", data =>{thisSave1.setState({opciones : data});});
+    $.get("/aleatorio", data =>{thisSave1.setState({imagen : data});});
 
      }
 
      componentWillReceiveProps() {//ACTUALIZA AL MOMENTO DE SUBIR
            let thisSave1 = this;
            setTimeout(() => {
-             $.get("http://localhost:3000/imagenes",{select: this.props.seleccionado}, data =>{
+             $.get("/imagenes",{select: this.props.seleccionado}, data =>{
                  thisSave1.setState({
                      imagen : data
                  });
@@ -29,7 +29,7 @@ class Gallery extends React.Component {
   onClickBorrar(a) {
     if (confirm("Seguro que desea eliminar la imagen?") == true) {
         let thisSave1 = this;
-        $.get("http://localhost:3000/borrar",{foto:a, select: this.props.seleccionado}, data =>{thisSave1.setState({imagen:data});});
+        $.get("/borrar",{foto:a, select: this.props.seleccionado}, data =>{thisSave1.setState({imagen:data});});
     }
   }
   onClickAmpliar(a) {window.open('/pictures?picture='+this.props.seleccionado+'/'+a, '_blank');}
@@ -47,8 +47,8 @@ class Gallery extends React.Component {
       else{
         let thisSave1 = this;
         thisSave1.setState({opciones : ""});
-        $.get("http://localhost:3000/new", {new:str}, data =>{thisSave1.setState({opciones : data})});
-        //$.get("http://localhost:3000/opciones", data =>{thisSave1.setState({opciones : data});});
+        $.get("/new", {new:str}, data =>{thisSave1.setState({opciones : data})});
+        //$.get("/opciones", data =>{thisSave1.setState({opciones : data});});
       }
     }
   }
@@ -60,7 +60,7 @@ class Gallery extends React.Component {
   onClickOpcion(option){
 
     let thisSave1 = this;
-    $.get("http://localhost:3000/imagenes",{select: option}, data =>{
+    $.get("/imagenes",{select: option}, data =>{
       thisSave1.setState({imagen : data});
       thisSave1.props.updateSeleccionado(option);
     });
@@ -68,9 +68,9 @@ class Gallery extends React.Component {
 
   onClickRemoveFolder(){
     let thisSave1 = this;
-    $.get("http://localhost:3000/removeFolder", {select: this.props.seleccionado}, data =>{thisSave1.setState({opciones : data, imagen : ""});});
+    $.get("/removeFolder", {select: this.props.seleccionado}, data =>{thisSave1.setState({opciones : data, imagen : ""});});
     thisSave1.props.updateSeleccionado("");
-    $.get("http://localhost:3000/aleatorio", data =>{thisSave1.setState({imagen : data});});
+    $.get("/aleatorio", data =>{thisSave1.setState({imagen : data});});
     //console.log(this.props.seleccionado);
 
   }

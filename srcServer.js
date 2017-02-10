@@ -1,17 +1,31 @@
 var express = require('express');
 var fs = require('fs');
 var path = require('path');
+var http = require('http');
+var https = require('https');
 var sesion = require('express-fileupload');
 var easyimg = require('easyimage');
 var childProcess = require('child_process');
 var jsonFolders = require('./jsonFolders.json');
 
-const port = 3000;
+
+var sslOptions = {
+  key: fs.readFileSync('key.pem'),
+  cert: fs.readFileSync('cert.pem'),
+  passphrase: 'llave2'
+};
+
+
+const port = 5000;
 const app = express();
+
+
 
 //Object.keys(jsonFolders).forEach(key=>{if(jsonFolders[key]!=='')carpetas.push(jsonFolders[key]);});
 
 app.use(sesion());
+
+console.log(app.get('portHttps'));
 
 app.post('/upload', (req, res)=> {
   let file= req.files.file;
@@ -59,6 +73,8 @@ app.post('/upload', (req, res)=> {
 });
 
 app.use(express.static(__dirname + '/build'))
+
+app.set('port', process.env.PORT || 4000);
 
 app.get('/', function(req, res) {
   res.sendFile(path.join( __dirname, 'index.html'));
@@ -141,8 +157,14 @@ app.get('/borrar', function(req, res) {
   res.send(fs.readdirSync('./5000/Images/'+jsonFolders[req.query.select]));
 });
 
-app.listen(port, function(err) {
-  if (err) {
-    console.log(err);
-  }
-});
+var server = https.createServer(sslOptions, app);
+server.listen(port);
+
+//http.createServer(app).listen(portHttp);
+
+//https.createServer(sslOptions, app).listen(portHttps);
+//app.listen(port, function(err) {
+//  if (err) {
+//    console.log(err);
+//  }
+//});

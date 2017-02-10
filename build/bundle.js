@@ -20034,10 +20034,10 @@ var Gallery = function (_React$Component) {
     value: function componentWillMount() {
       //Obtiene imagenes en la carpeta 5000
       var thisSave1 = this;
-      $.get("http://localhost:3000/opciones", function (data) {
+      $.get("/opciones", function (data) {
         thisSave1.setState({ opciones: data });
       });
-      $.get("http://localhost:3000/aleatorio", function (data) {
+      $.get("/aleatorio", function (data) {
         thisSave1.setState({ imagen: data });
       });
     }
@@ -20049,7 +20049,7 @@ var Gallery = function (_React$Component) {
       //ACTUALIZA AL MOMENTO DE SUBIR
       var thisSave1 = this;
       setTimeout(function () {
-        $.get("http://localhost:3000/imagenes", { select: _this2.props.seleccionado }, function (data) {
+        $.get("/imagenes", { select: _this2.props.seleccionado }, function (data) {
           thisSave1.setState({
             imagen: data
           });
@@ -20064,7 +20064,7 @@ var Gallery = function (_React$Component) {
       if (confirm("Seguro que desea eliminar la imagen?") == true) {
         (function () {
           var thisSave1 = _this3;
-          $.get("http://localhost:3000/borrar", { foto: a, select: _this3.props.seleccionado }, function (data) {
+          $.get("/borrar", { foto: a, select: _this3.props.seleccionado }, function (data) {
             thisSave1.setState({ imagen: data });
           });
         })();
@@ -20094,10 +20094,10 @@ var Gallery = function (_React$Component) {
           (function () {
             var thisSave1 = _this4;
             thisSave1.setState({ opciones: "" });
-            $.get("http://localhost:3000/new", { new: str }, function (data) {
+            $.get("/new", { new: str }, function (data) {
               thisSave1.setState({ opciones: data });
             });
-            //$.get("http://localhost:3000/opciones", data =>{thisSave1.setState({opciones : data});});
+            //$.get("/opciones", data =>{thisSave1.setState({opciones : data});});
           })();
         }
       }
@@ -20112,7 +20112,7 @@ var Gallery = function (_React$Component) {
     value: function onClickOpcion(option) {
 
       var thisSave1 = this;
-      $.get("http://localhost:3000/imagenes", { select: option }, function (data) {
+      $.get("/imagenes", { select: option }, function (data) {
         thisSave1.setState({ imagen: data });
         thisSave1.props.updateSeleccionado(option);
       });
@@ -20121,11 +20121,11 @@ var Gallery = function (_React$Component) {
     key: 'onClickRemoveFolder',
     value: function onClickRemoveFolder() {
       var thisSave1 = this;
-      $.get("http://localhost:3000/removeFolder", { select: this.props.seleccionado }, function (data) {
+      $.get("/removeFolder", { select: this.props.seleccionado }, function (data) {
         thisSave1.setState({ opciones: data, imagen: "" });
       });
       thisSave1.props.updateSeleccionado("");
-      $.get("http://localhost:3000/aleatorio", function (data) {
+      $.get("/aleatorio", function (data) {
         thisSave1.setState({ imagen: data });
       });
       //console.log(this.props.seleccionado);
