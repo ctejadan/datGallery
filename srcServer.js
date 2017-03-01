@@ -25,8 +25,6 @@ const app = express();
 
 app.use(sesion());
 
-console.log(app.get('portHttps'));
-
 app.post('/upload', (req, res)=> {
   let file= req.files.file;
   let fileName = file.name.replace(/\s+/g, '');
@@ -36,7 +34,6 @@ app.post('/upload', (req, res)=> {
       function(file) {
         //console.log(file);
         //console.log(file.size);
-        console.log(file.size);
         if(file.size<8000000){
           easyimg.thumbnail({
                  src:'./5000/Images/'+jsonFolders[req.query.select]+'/'+fileName, dst:'./5000/Thumbnails/'+jsonFolders[req.query.select]+'/'+fileName,

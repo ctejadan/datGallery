@@ -9,7 +9,7 @@ class SelectGallery extends React.Component {
 
   componentWillMount() {//Obtiene las carpetas en la carpeta 5000
     let thisSave1 = this;
-    $.get("http://localhost:3000/opciones", data =>{
+    $.get("/opciones", data =>{
         thisSave1.setState({
               opciones : data
         });

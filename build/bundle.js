@@ -20353,7 +20353,7 @@ var SelectGallery = function (_React$Component) {
     value: function componentWillMount() {
       //Obtiene las carpetas en la carpeta 5000
       var thisSave1 = this;
-      $.get("http://localhost:3000/opciones", function (data) {
+      $.get("/opciones", function (data) {
         thisSave1.setState({
           opciones: data
         });
